@@ -3,10 +3,10 @@
     <div class="row">
       <a {{action 'view'}} class='notification_box'>
 
-        {{#if nextNotification.call}}
+        {{#if (js-x "this.category != 'message'" nextNotification)}}
           <div class="small-10 large-11 columns">
             <div class="notification-text ellipsis one-line-ellipsis">
-              {{t "notifications.text" text=nextNotification.text}}
+              {{t "notifications.text" text=nextNotification.message}}
             </div>
           </div>
           <div class="small-2 large-1 columns">
@@ -21,7 +21,7 @@
           </div>
           <div class="small-8 large-10 columns msg-with-arrow">
             <div class="notification-text ellipsis one-line-ellipsis">
-              {{t "notifications.text" text=nextNotification.text}}
+              {{t "notifications.text" text=nextNotification.message}}
             </div>
             <div class="arrow-icon">
               <i class="fa fa-arrow-circle-right"></i>

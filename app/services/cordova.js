@@ -34,7 +34,7 @@ export default Ember.Service.extend({
     // handle APNS notifications for iOS
     window.onNotificationAPN = function(e) {
       if (e.foreground === "0") {
-        return transitionToMessageThread(e);
+        return processTappedNotification(e);
       }
 
       if (e.badge) {
@@ -56,7 +56,7 @@ export default Ember.Service.extend({
             // handled by socket.io notification sent at same time (e.payload.message)
           }
           else {
-            transitionToMessageThread(e.payload);
+            processTappedNotification(e.payload);
             // otherwise we were launched because the user touched a notification in the notification tray
           }
           break;
@@ -74,7 +74,7 @@ export default Ember.Service.extend({
     // handle WNS notifications for WP8.1
     window.onNotificationWindows = function(e) {
       if (e.detail.kind === Windows.ApplicationModel.Activation.ActivationKind.launch) {
-        transitionToMessageThread(JSON.parse(e.detail.arguments));
+        processTappedNotification(JSON.parse(e.detail.arguments));
       }
     }
 
@@ -91,10 +91,13 @@ export default Ember.Service.extend({
       _this.get("logger").error(error);
     }
 
-    function transitionToMessageThread(message) {
-      var controller = _this.container.lookup("controller:application");
-      var route =  _this.get("messagesUtil").getRoute(message);
-      controller.transitionToRoute.apply(controller, route);
+    function processTappedNotification(payload) {
+      var notifications = _this.container.lookup("controller:notifications");
+      if (payload.category === "incoming_call") {
+        notifications.acceptCall(payload);
+      }
+      notifications.setRoute(payload);
+      notifications.transitionToRoute.apply(notifications, payload.route);
     }
 
     document.addEventListener('deviceready', onDeviceReady, true);

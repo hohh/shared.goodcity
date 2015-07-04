@@ -17,7 +17,7 @@ export default Ember.Service.extend({
     var offerId = message.get ? message.get("offer.id") : message.offer_id;
     var itemId = message.get ? message.get("item.id") : message.item_id;
     var isPrivate = message.get ? message.get("isPrivate") : message.is_private;
-    var isPrivate = isPrivate ? isPrivate.toString().toLowerCase() === "true" : false;
+    isPrivate = isPrivate ? isPrivate.toString().toLowerCase() === "true" : false;
 
     if (isDonorApp) {
       if (itemId) {
