@@ -16,4 +16,22 @@ export default DS.Model.extend({
   createdDate: function() {
     return this.get("createdAt").toDateString();
   }.property(),
+
+  displayMessage: function() {
+    switch (this.get("state")) {
+      case 'draft': return Ember.I18n.t("item_log.added", {name: {name: this.get("whodunnitName")}});
+      case 'submitted' : return Ember.I18n.t("item_log.submitted", {name: this.get("whodunnitName")});
+      case 'accepted' : return Ember.I18n.t("item_log.accepted", {name: this.get("whodunnitName")});
+      case 'rejected' : return Ember.I18n.t("item_log.rejected", {name: this.get("whodunnitName")});
+      case 'received' : return Ember.I18n.t("item_log.received", {name: this.get("whodunnitName")});
+      case 'missing' : return Ember.I18n.t("item_log.missing", {name: this.get("whodunnitName")});
+    }
+
+    switch (this.get("event")) {
+      case 'donor_called': return Ember.I18n.t("offer_log.donor_called", {name: this.get("whodunnitName")});
+      case 'call_accepted' : return Ember.I18n.t("offer_log.call_accepted", {name: this.get("whodunnitName")});
+    }
+
+    return "";
+  }.property()
 });

@@ -17,25 +17,42 @@ export default Ember.ArrayController.extend({
     return this.store.all("version");
   }.property(),
 
+  isItemThread: Ember.computed.notEmpty("item"),
+
   messagesAndLogs: function(){
     var messages = this.get("model").toArray();
     var itemLog = this.get("itemLogs").toArray();
     var packagesLog = this.get("packagesLog").toArray();
-    return messages.concat(itemLog, packagesLog);
-  }.property("model.[]", "itemLogs.[]", "packagesLog.[]"),
+    var offerLogs = this.get("offerLogs").toArray();
+    return messages.concat(itemLog, packagesLog, offerLogs);
+  }.property("model.[]", "itemLogs.[]", "packagesLog.[]", "offerLogs.[]"),
 
   itemLogs: function(){
+    if (!this.get("isItemThread")) {
+      return [];
+    }
     var itemId = parseInt(this.get("item.id"));
     return this.store.all('version').filterBy('itemType', 'Item').
       filterBy("itemId", itemId);
-  }.property("item.id", "versions.[]"),
+  }.property("item.id", "versions.[]", "isItemThread"),
 
   packagesLog: function() {
-    var packageIds = this.get("item.packages").mapBy("id");
+    if (!this.get("isItemThread")) {
+      return [];
+    }
+    var packageIds = (this.get("item.packages") || []).mapBy("id");
     return this.store.all('version').filterBy('itemType', 'Package').filter(function(log){
       return (packageIds.indexOf(String(log.get("itemId"))) >= 0) && (["received", "missing"].indexOf(log.get("state")) >= 0);
     });
-  }.property("item.packages.[]", "versions.[]"),
+  }.property("item.packages.[]", "versions.[]", "isItemThread"),
+
+  offerLogs: function() {
+    if (this.get("isItemThread")) {
+      return [];
+    }
+    var offerId = parseInt(this.get("offer.id"));
+    return this.store.all('version').filterBy('itemType', 'Offer').filterBy("itemId", offerId);
+  }.property("versions.[]", "offer.id", "isItemThread"),
 
   groupedElements: function() {
     return this.groupBy(this.get("sortedElements"), "createdDate");
