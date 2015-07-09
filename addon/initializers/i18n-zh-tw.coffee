@@ -171,7 +171,7 @@ I18nTranslationsZhTw =
     "edited": "edited item"
     "accepted": "accepted item"
     "rejected": "rejected item"
-    "submitted": "submitted item"
+    "submitted": "教 item"
     "received": "received item"
     "missing": "marked item missing"
 
